@@ -12,7 +12,7 @@ const orgSchema = new mongoose.Schema({
     status: {
       type: String,
       required: true,
-      default: ['active'],
+      default: 'active',
       enum: ['active', 'trialing', 'overdue', 'canceled']
     },
     last4: {
@@ -21,6 +21,11 @@ const orgSchema = new mongoose.Schema({
       max: 4
     }
   }
+})
+
+orgSchema.post('remove', async function(doc, next) {
+  await Project.deleteMany({org: doc._id })
+  next()
 })
 
 module.exports = mongoose.model('org', orgSchema)
